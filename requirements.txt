@@ -1,0 +1,11 @@
+psutil
+pyotp
+playwright
+requests
+pandas
+tqdm
+selenium
+webdriver-manager
+python-dotenv
+gspread
+google-auth-oauthlib
