@@ -8,6 +8,7 @@ import argparse
 from rapidfuzz import fuzz
 import pandas as pd
 from login import login_with_sso
+import getpass
 
 RESUME_FILE = "baris.txt"
 MAX_SIMILARITY = 85
@@ -35,15 +36,18 @@ def similarity(a, b):
 
 def main():
     parser = argparse.ArgumentParser(description="Tambah usaha ke SBR via Matcha Pro")
-    parser.add_argument("username", help="Username SSO")
-    parser.add_argument("password", help="Password SSO")
-    parser.add_argument("otp_code", nargs="?", default=None, help="OTP code (optional)")
+    # parser.add_argument("username", help="Username SSO")
+    # parser.add_argument("password", help="Password SSO")
+    # parser.add_argument("otp_code", nargs="?", default=None, help="OTP code (optional)")
     parser.add_argument("--csv", required=True, help="Nama file CSV yang akan dikirim")
     args = parser.parse_args()
 
-    username = args.username
-    password = args.password
-    otp_code = args.otp_code
+    # username = args.username
+    # password = args.password
+    # otp_code = args.otp_code
+    username = input("Masukkan Username SSO: ").strip()
+    password = getpass.getpass("Masukkan Password SSO: ")
+    otp_code = sys.argv[3] if len(sys.argv) > 3 else None
     csv_file = args.csv
 
     page, browser = login_with_sso(username, password, otp_code)
@@ -190,10 +194,14 @@ def main():
                     "id_table": "",
                     "nama_usaha": base64.b64encode(nama_usaha_raw.encode('utf-8')).decode('utf-8'),
                     "alamat": base64.b64encode(alamat_raw.encode('utf-8')).decode('utf-8'),
-                    "provinsi": str(int(row['provinsi'])),
-                    "kabupaten": str(int(row['kabupaten'])),
-                    "kecamatan": str(int(row['kecamatan'])),
-                    "desa": str(int(row['desa'])),
+                    # "provinsi": str(int(row['provinsi'])),
+                    "provinsi": str(row['provinsi']).strip().zfill(2),
+                    # "kabupaten": str(int(row['kabupaten'])),
+                    "kabupaten": str(row['kabupaten']).strip().zfill(2),
+                    # "kecamatan": str(int(row['kecamatan'])),
+                    "kecamatan": str(row['kecamatan']).strip().zfill(3),
+                    # "desa": str(int(row['desa'])),
+                    "desa": str(row['desa']).strip().zfill(3),
                     "latitude": str(row['lat']),
                     "longitude": str(row['lon']),
                     "confirmSubmit": "false",
